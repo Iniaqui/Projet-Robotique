@@ -1,0 +1,142 @@
+#include <Stepper.h>
+#define STEPS 200
+
+Stepper small_stepperGAUCHE(STEPS,2,3,4,5);
+Stepper small_stepperDROITE(STEPS,9,8,7,6 );
+Stepper small_stepperESSAI(STEPS,8,9,10,11 );
+int Steps2Take = 0;
+long temps = 0; 
+void setup()
+{
+   Serial.begin(9600); // 9600 bps
+    small_stepperGAUCHE.setSpeed(80);
+    small_stepperDROITE.setSpeed(80);
+  Serial.println("Test de moteur pas a pas");
+}
+
+void loop()
+{
+  Serial.println("Moteur en marche ");
+   Steps2Take=1;
+  //Faire tourner le moteur
+
+  Steps2Take=1;
+  
+  Serial.println("Avancer");
+  avancer();
+  Serial.println("Reculer");
+  reculer();
+  Serial.println("Tourner à gauche ");
+  gauche();
+  
+  
+}
+
+void avancer(){
+  temps = millis();
+    while(Steps2Take < 200){
+       
+      Serial.println("GAUCHE");
+  	small_stepperGAUCHE.step(Steps2Take);
+    Serial.println("DROITE");
+    small_stepperDROITE.step(Steps2Take);
+    Serial.println("Test fini ");
+      Serial.println(Steps2Take);
+      Steps2Take++;
+  }
+  temps = millis()- temps ;
+}
+
+void reculer(){
+  temps = millis();
+    while(Steps2Take < 200){
+      Serial.println("GAUCHE");
+  	small_stepperGAUCHE.step(-Steps2Take);
+    Serial.println("DROITE");
+    small_stepperDROITE.step(-Steps2Take);
+    Serial.println("Test fini ");
+      Serial.println(Steps2Take);
+      Steps2Take++;
+  }
+    temps = millis()- temps ;
+}
+
+void gauche(){
+    temps = millis();
+    while(Steps2Take < 200){
+      Serial.println("GAUCHE");
+  	small_stepperGAUCHE.step(Steps2Take);
+    Serial.println("DROITE");
+    //small_stepperDROITE.step(Steps2Take);
+    Serial.println("Test fini ");
+      Serial.println(-Steps2Take);
+      Steps2Take++;
+  }
+     temps = millis()- temps ;
+}
+
+void droite()
+{
+      temps = millis();
+   while(Steps2Take < 200){
+      Serial.println("DROITE");
+  	small_stepperGAUCHE.step(-Steps2Take);
+    Serial.println("GAUCHE");
+    //small_stepperDROITE.step(Steps2Take);
+    Serial.println("Test fini ");
+      Serial.println(Steps2Take);
+      Steps2Take++;
+	}
+  temps = millis()- temps ;
+}
+
+void tournerAutour(){
+ droite();
+  gauche();
+}
+void ESSAI(){
+   while(Steps2Take < 200){
+      Serial.println("DROITE");
+  	small_stepperESSAI.step(-Steps2Take);
+    Serial.println("GAUCHE");
+    //small_stepperDROITE.step(Steps2Take);
+    Serial.println("Test fini ");
+      Serial.println(Steps2Take);
+      Steps2Take++;
+	}
+}
+
+void translation(double x, double y, double posX, double posY,double distancePacouruePourUnTour){
+  
+  // Vecteur 
+   double Xab=(posX-x);
+   double Yab = (posY-y);
+   double m =(Yab/Xab) // coefficient directeur droite 
+   double b = posY- (m*posX);
+ 
+  
+  // Calcule de la distance 
+  double X= pow((posX-x),2);
+  double Y= pow((posY-y),2);
+  
+  double distancePoint =sqrt(X+Y);
+ double distance=0;
+  while(distance != distancePoint){
+    if((distancePoint-distance)>0 && (distancePoint-(distance+distancePacouruePourUnTour))> 0){
+      avancer();
+      distance =distance + distancePacouruePourUnTour;
+    }
+    else if((distancePoint-distance)>0){
+      reculer();
+      
+    }
+    
+  }
+  
+  
+  
+}
+
+
+
+  
